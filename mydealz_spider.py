@@ -3,26 +3,13 @@ import scrapy
 class MyDealzSpider(scrapy.Spider):
     name = 'mydealz'
 
-    #start_urls = ['https://www.mydealz.de/']
-    #https://www.mydealz.de/gruppe/airpods?page=2
-    #'https://www.mydealz.de/deals?page={
-    #https://www.mydealz.de/deals?page=3
-    #https://www.mydealz.de/deals?page={}
-    
-    #def start_requests(self):
-    #    urls = ('https://www.mydealz.de/deals?page={}'.format(i) for i in range(0,2))
-    #    for url in urls:
-    #        yield scrapy.Request(url=url, callback=self.parse)
-
     def start_requests(self):
-        urls = ('https://www.mydealz.de/deals?page={}'.format(i) for i in range(0,1))
+        urls = ('https://www.mydealz.de/deals?page={}'.format(i) for i in range(0,1000))
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)            
               
-
-
     def parse(self, response):
-        # follow links to author pages
+        # follow links to deal
         for href in response.css('a.cept-tt.thread-link.linkPlain.thread-title--list::attr(href)'):
             yield response.follow(href, self.parse_mydealz)
             
@@ -45,5 +32,3 @@ class MyDealzSpider(scrapy.Spider):
             'publication_date' : response.css('span.space--fromW3-ml-1.size--all-s::text').extract(),
             'description' : response.xpath("string(//div[@class='userHtml'])").extract()
         }
-        
-        
